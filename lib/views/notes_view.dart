@@ -3,6 +3,8 @@ import 'package:mynotes1/constants/routes.dart';
 import 'package:mynotes1/enums/menu_action.dart';
 import 'package:mynotes1/services/auth/auth_service.dart';
 
+import '../services/crud/notes_service.dart';
+
 class NotesView extends StatefulWidget {
   const NotesView({Key? key}) : super(key: key);
 
@@ -11,6 +13,28 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
+  late final NotesService _notesService;
+  //IDK why we used exclamation marks with currentUser and email
+  //a getter for email to use in notes view
+  String get userEmail => AuthService.firebase().currentUser!.email!;
+
+  //when reaching the notes view, we are making sure that the database is connected.
+  //similarly when exiting, we need to make sure that the connection is disposed.
+  @override
+  void initState() {
+    _notesService = NotesService();
+    //We don't need to open the database here as all the operations in the notesService are
+    //opening the database by using the method _ensureDbIsOpen()
+    //_notesService.open();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _notesService.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +71,27 @@ class _NotesViewState extends State<NotesView> {
           )
         ],
       ),
-      body: const Text('Bellow!'),
+      body: FutureBuilder(
+        future: _notesService.getOrCreateUser(email: userEmail),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              return StreamBuilder(
+                stream: _notesService.allNotes,
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const Text("Waiting for all the notes");
+                    default:
+                      return const CircularProgressIndicator();
+                  }
+                },
+              );
+            default:
+              return const CircularProgressIndicator();
+          }
+        },
+      ),
     );
   }
 }
