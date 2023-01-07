@@ -28,12 +28,13 @@ class _NotesViewState extends State<NotesView> {
     //_notesService.open();
     super.initState();
   }
-
+/*
   @override
   void dispose() {
     _notesService.close();
     super.dispose();
   }
+*/
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +89,27 @@ class _NotesViewState extends State<NotesView> {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
                     case ConnectionState.active:
-                      return const Text("Waiting for all the notes");
+                      if (snapshot.hasData) {
+                        final allNotes = snapshot.data as List<DatabaseNote>;
+                        print(allNotes);
+                        return ListView.builder(
+                          itemCount: allNotes.length,
+                          itemBuilder: (context, index) {
+                            final note = allNotes[index];
+                            return ListTile(
+                              title: Text(
+                                note.text,
+                                maxLines: 1,
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        //return const CircularProgressIndicator();
+                        return const Text('No notes yet.');
+                      }
                     default:
                       return const CircularProgressIndicator();
                   }

@@ -10,13 +10,19 @@ class NotesService {
 
   //creating a singleton which is basically a single instance copy throughout the project
   static final NotesService _shared = NotesService._sharedInstance();
-  NotesService._sharedInstance();
+  //populating the notes in the stream if someone is listening
+  NotesService._sharedInstance() {
+    _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
+      onListen: () {
+        _notesStreamController.sink.add(_notes);
+      },
+    );
+  }
   factory NotesService() =>
       _shared; //whenever anyone calls the NotesService constructor, shared will be returned.
 
   List<DatabaseNote> _notes = [];
-  final _notesStreamController =
-      StreamController<List<DatabaseNote>>.broadcast();
+  late final StreamController<List<DatabaseNote>> _notesStreamController;
 
   Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
 
