@@ -8,6 +8,12 @@ import 'package:path/path.dart' show join;
 class NotesService {
   Database? _db;
 
+  //creating a singleton which is basically a single instance copy throughout the project
+  static final NotesService _shared = NotesService._sharedInstance();
+  NotesService._sharedInstance();
+  factory NotesService() =>
+      _shared; //whenever anyone calls the NotesService constructor, shared will be returned.
+
   List<DatabaseNote> _notes = [];
   final _notesStreamController =
       StreamController<List<DatabaseNote>>.broadcast();

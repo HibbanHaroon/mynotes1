@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mynotes1/constants/routes.dart';
 import 'package:mynotes1/enums/menu_action.dart';
 import 'package:mynotes1/services/auth/auth_service.dart';
-
-import '../services/crud/notes_service.dart';
+import 'package:mynotes1/services/crud/notes_service.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({Key? key}) : super(key: key);
@@ -22,6 +21,7 @@ class _NotesViewState extends State<NotesView> {
   //similarly when exiting, we need to make sure that the connection is disposed.
   @override
   void initState() {
+    //singleton is basiclally one copy through out the project.
     _notesService = NotesService();
     //We don't need to open the database here as all the operations in the notesService are
     //opening the database by using the method _ensureDbIsOpen()
@@ -42,6 +42,12 @@ class _NotesViewState extends State<NotesView> {
         title: const Text('My Notes'),
         //A menu can be opened by the three dots
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(newNoteRoute);
+            },
+            icon: const Icon(Icons.add),
+          ),
           PopupMenuButton<MenuAction>(
             onSelected: (value) async {
               switch (value) {
