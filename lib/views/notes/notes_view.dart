@@ -17,7 +17,7 @@ class _NotesViewState extends State<NotesView> {
   late final NotesService _notesService;
   //IDK why we used exclamation marks with currentUser and email
   //a getter for email to use in notes view
-  String get userEmail => AuthService.firebase().currentUser!.email!;
+  String get userEmail => AuthService.firebase().currentUser!.email;
 
   //when reaching the notes view, we are making sure that the database is connected.
   //similarly when exiting, we need to make sure that the connection is disposed.
