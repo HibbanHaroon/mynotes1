@@ -6,11 +6,13 @@ import 'package:flutter/cupertino.dart';
 class CloudNote {
   final String documentId;
   final String ownerUserId;
+  final String title;
   final String text;
 
   const CloudNote({
     required this.documentId,
     required this.ownerUserId,
+    required this.title,
     required this.text,
   });
 
@@ -18,5 +20,6 @@ class CloudNote {
   CloudNote.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
       : documentId = snapshot.id,
         ownerUserId = snapshot.data()[ownerUserIdFieldName],
+        title = snapshot.data()[titleFieldName] as String,
         text = snapshot.data()[textFieldName] as String;
 }

@@ -18,31 +18,62 @@ class NotesListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: notes.length,
-      itemBuilder: (context, index) {
-        final note = notes.elementAt(index);
-        return ListTile(
-          onTap: () {
-            onTap(note);
-          },
-          title: Text(
-            note.text,
-            maxLines: 1,
-            softWrap: true,
-            overflow: TextOverflow.ellipsis,
-          ),
-          trailing: IconButton(
-            onPressed: () async {
-              final shouldDelete = await showDeleteDialog(context);
-              if (shouldDelete) {
-                onDeleteNote(note);
-              }
-            },
-            icon: const Icon(Icons.delete),
-          ),
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GridView.builder(
+        itemCount: notes.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 4.0,
+          mainAxisSpacing: 4.0,
+        ),
+        itemBuilder: (context, index) {
+          final note = notes.elementAt(index);
+          return Card(
+            elevation: 5,
+            color: const Color(0xffddf0dd),
+            child: InkWell(
+              onLongPress: () async {
+                final shouldDelete = await showDeleteDialog(context);
+                if (shouldDelete) {
+                  onDeleteNote(note);
+                }
+              },
+              onTap: () {
+                onTap(note);
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      note.title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      note.text,
+                      maxLines: 7,
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mynotes1/constants/routes.dart';
 import 'package:mynotes1/enums/menu_action.dart';
 import 'package:mynotes1/services/auth/auth_service.dart';
+import 'package:mynotes1/services/auth/auth_user.dart';
 import 'package:mynotes1/services/cloud/cloud_note.dart';
 import 'package:mynotes1/services/cloud/firebase_cloud_storage.dart';
 import 'package:mynotes1/utilities/dialogs/logout_dialog.dart';
@@ -18,7 +19,9 @@ class _NotesViewState extends State<NotesView> {
   late final FirebaseCloudStorage _notesService;
   //IDK why we used exclamation marks with currentUser and email
   //a getter for email to use in notes view
-  String get userId => AuthService.firebase().currentUser!.id;
+  AuthUser get user => AuthService.firebase().currentUser!;
+  String get userId => user.id;
+  String get userEmail => user.email;
 
   //when reaching the notes view, we are making sure that the database is connected.
   //similarly when exiting, we need to make sure that the connection is disposed.
@@ -46,12 +49,6 @@ class _NotesViewState extends State<NotesView> {
         title: const Text('My Notes'),
         //A menu can be opened by the three dots
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
-            },
-            icon: const Icon(Icons.add),
-          ),
           PopupMenuButton<MenuAction>(
             onSelected: (value) async {
               switch (value) {
@@ -109,6 +106,78 @@ class _NotesViewState extends State<NotesView> {
               return const CircularProgressIndicator();
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
+        },
+        tooltip: 'Add Note',
+        child: Icon(Icons.add),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            Center(
+              child: UserAccountsDrawerHeader(
+                accountEmail: Text(
+                  userEmail,
+                  style: const TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
+                currentAccountPicture: CircleAvatar(
+                  child: Text(
+                    userEmail[0].toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                accountName: null,
+              ),
+            ), /*
+            const ListTile(
+              leading: Icon(Icons.rate_review),
+              title: Text(
+                'Rate Your Day',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.green,
+                ),
+              ),
+            ),
+            const ListTile(
+              leading: Icon(Icons.question_mark),
+              title: Text(
+                'Know Yourself',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.green,
+                ),
+              ),
+            ),
+            const ListTile(
+              leading: Icon(Icons.sports_soccer),
+              title: Text(
+                'Goals',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.green,
+                ),
+              ),
+            ),
+            const ListTile(
+              leading: Icon(Icons.sticky_note_2),
+              title: Text(
+                'Notes',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.green,
+                ),
+              ),
+            ),*/
+          ],
+        ),
       ),
     );
   }

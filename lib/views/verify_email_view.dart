@@ -16,29 +16,56 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
       appBar: AppBar(
         title: const Text('Email Verification'),
       ),
-      body: Column(
-        children: [
-          const Text(
-              "We've already sent you an email verification. Please open it to verify your account."),
-          const Text(
-              "If you haven't received your email yet, press the button below"),
-          TextButton(
-            onPressed: () async {
-              await AuthService.firebase().sendEmailVerification();
-            },
-            child: const Text('Resend email verification'),
-          ),
-          TextButton(
-            onPressed: () async {
-              await AuthService.firebase().logOut();
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                registerRoute,
-                (route) => false,
-              );
-            },
-            child: const Text('Restart'),
-          )
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(40.0),
+        child: Column(
+          children: [
+            const Text(
+              "We've already sent you an email verification. Please open it to verify your account.",
+            ),
+            const Text(""),
+            const Text(
+                "If you haven't received your email yet, press the button below"),
+            const SizedBox(
+              height: 15,
+            ),
+            SizedBox(
+              width: 300,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () async {
+                  await AuthService.firebase().sendEmailVerification();
+                },
+                style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
+                child: const Text(
+                  'Resend Email Verification',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            SizedBox(
+              width: 300,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () async {
+                  await AuthService.firebase().logOut();
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    loginRoute,
+                    (route) => false,
+                  );
+                },
+                style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
+                child: const Text(
+                  'Login',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
