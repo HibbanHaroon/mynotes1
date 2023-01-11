@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mynotes1/constants/routes.dart';
 import 'package:mynotes1/services/auth/auth_service.dart';
+import 'package:mynotes1/views/goals/create_update_goal_view.dart';
+import 'package:mynotes1/views/goals/goals_view.dart';
 import 'package:mynotes1/views/login_view.dart';
 import 'package:mynotes1/views/notes/create_update_note_view.dart';
 import 'package:mynotes1/views/notes/notes_view.dart';
+import 'package:mynotes1/views/questions/create_update_question_view.dart';
+import 'package:mynotes1/views/questions/questions_view.dart';
 import 'package:mynotes1/views/register_view.dart';
 import 'package:mynotes1/views/verify_email_view.dart';
 import 'dart:developer' as devtools
@@ -23,9 +27,14 @@ void main() {
     routes: {
       loginRoute: (context) => const LoginView(),
       registerRoute: (context) => const RegisterView(),
-      notesRoute: (context) => const NotesView(),
       verifyEmailRoute: (context) => const VerifyEmailView(),
+      notesRoute: (context) => const NotesView(),
       createOrUpdateNoteRoute: (context) => const CreateUpdateNoteView(),
+      goalsRoute: (context) => const GoalsView(),
+      createOrUpdateGoalRoute: (context) => const CreateUpdateGoalView(),
+      questionsRoute: (context) => const QuestionsView(),
+      createOrUpdateQuestionRoute: (context) =>
+          const CreateUpdateQuestionView(),
     },
   ));
 }

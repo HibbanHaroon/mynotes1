@@ -1,44 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:mynotes1/services/auth/auth_service.dart';
-import 'package:mynotes1/services/cloud/notes/cloud_note.dart';
+import 'package:mynotes1/services/cloud/questions/cloud_question.dart';
 import 'package:mynotes1/services/cloud/cloud_storage_exceptions.dart';
 import 'package:mynotes1/services/cloud/firebase_cloud_storage.dart';
 import 'package:mynotes1/utilities/generics/get_arguments.dart';
-import 'package:mynotes1/utilities/dialogs/cannot_share_empty_note_dialog.dart';
+import 'package:mynotes1/utilities/dialogs/cannot_share_empty_question_dialog.dart';
 import 'package:share_plus/share_plus.dart';
 
-class CreateUpdateNoteView extends StatefulWidget {
-  const CreateUpdateNoteView({super.key});
+class CreateUpdateQuestionView extends StatefulWidget {
+  const CreateUpdateQuestionView({super.key});
 
   @override
-  State<CreateUpdateNoteView> createState() => _CreateUpdateNoteViewState();
+  State<CreateUpdateQuestionView> createState() =>
+      _CreateUpdateQuestionViewState();
 }
 
-class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
+class _CreateUpdateQuestionViewState extends State<CreateUpdateQuestionView> {
   //_note to keep track of the note... so a new note isn't created everytime build method is called
-  CloudNote? _note;
-  late final FirebaseCloudStorage _notesService;
+  CloudQuestion? _question;
+  late final FirebaseCloudStorage _questionsService;
   //to keep track of the input the user is entering.
   late final TextEditingController _textController;
   late final TextEditingController _titleController;
 
   @override
   void initState() {
-    _notesService = FirebaseCloudStorage();
+    _questionsService = FirebaseCloudStorage();
     _titleController = TextEditingController();
     _textController = TextEditingController();
     super.initState();
   }
 
   void _textControllerListener() async {
-    final note = _note;
-    if (note == null) {
+    final question = _question;
+    if (question == null) {
       return;
     }
     final text = _textController.text;
     final title = _titleController.text;
-    await _notesService.updateNote(
-      documentId: note.documentId,
+    await _questionsService.updateQuestion(
+      documentId: question.documentId,
       title: title,
       text: text,
     );
@@ -51,45 +52,47 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     _titleController.addListener(_textControllerListener);
   }
 
-  Future<CloudNote> createOrGetExistingNote(BuildContext context) async {
-    final widgetNote = context.getArgument<CloudNote>();
+  Future<CloudQuestion> createOrGetExistingQuestion(
+      BuildContext context) async {
+    final widgetQuestion = context.getArgument<CloudQuestion>();
     //user can come to this method either by clicking on the note or simply clicking on the plus icon
     //in the latter case there will be widgetNote will be null.
 
     //If the note exists i.e., user clicked on a note to edit it then we do the following
-    if (widgetNote != null) {
-      _note = widgetNote;
-      _textController.text = widgetNote.text;
-      _titleController.text = widgetNote.title;
-      return widgetNote;
+    if (widgetQuestion != null) {
+      _question = widgetQuestion;
+      _textController.text = widgetQuestion.text;
+      _titleController.text = widgetQuestion.title;
+      return widgetQuestion;
     }
 
-    final existingNote = _note;
-    if (existingNote != null) {
-      return existingNote;
+    final existingQuestion = _question;
+    if (existingQuestion != null) {
+      return existingQuestion;
     }
     final currentUser = AuthService.firebase().currentUser!;
     final userId = currentUser.id;
-    final newNote = await _notesService.createNewNote(ownerUserId: userId);
-    _note = newNote;
-    return newNote;
+    final newQuestion =
+        await _questionsService.createNewQuestion(ownerUserId: userId);
+    _question = newQuestion;
+    return newQuestion;
   }
 
-  void _deleteNoteIfTextIsEmpty() {
-    final note = _note;
-    final text = _textController.text;
-    if (text.isEmpty && note != null) {
-      _notesService.deleteNote(documentId: note.documentId);
+  void _deleteQuestionIfTitleIsEmpty() {
+    final question = _question;
+    final title = _titleController.text;
+    if (title.isEmpty && question != null) {
+      _questionsService.deleteQuestion(documentId: question.documentId);
     }
   }
 
-  void _saveNoteIfTextNotEmpty() async {
-    final note = _note;
+  void _saveQuestionIfTitleNotEmpty() async {
+    final question = _question;
     final text = _textController.text;
     final title = _titleController.text;
-    if (text.isNotEmpty && note != null) {
-      await _notesService.updateNote(
-        documentId: note.documentId,
+    if (title.isNotEmpty && question != null) {
+      await _questionsService.updateQuestion(
+        documentId: question.documentId,
         title: title,
         text: text,
       );
@@ -98,8 +101,8 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
 
   @override
   void dispose() {
-    _deleteNoteIfTextIsEmpty();
-    _saveNoteIfTextNotEmpty();
+    _deleteQuestionIfTitleIsEmpty();
+    _saveQuestionIfTitleNotEmpty();
     _textController.dispose();
     _titleController.dispose();
     super.dispose();
@@ -109,13 +112,13 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Note'),
+        title: const Text('New Question'),
         actions: [
           IconButton(
             onPressed: () async {
               final text = _textController.text;
-              if (_note == null || text.isEmpty) {
-                await showCannotShareEmptyNoteDialog(context);
+              if (_question == null || text.isEmpty) {
+                await showCannotShareEmptyQuestionDialog(context);
               } else {
                 //share the note with the title as well
                 Share.share(text);
@@ -130,7 +133,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
         child: Column(
           children: [
             FutureBuilder(
-              future: createOrGetExistingNote(context),
+              future: createOrGetExistingQuestion(context),
               builder: ((context, snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.done:
@@ -148,7 +151,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                               fontWeight: FontWeight.bold,
                             ),
                             decoration: const InputDecoration(
-                              hintText: 'Enter your title',
+                              hintText: 'Write your Question',
                               border: InputBorder.none,
                             ),
                           ),
@@ -160,7 +163,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                             keyboardType: TextInputType.multiline,
                             maxLines: null,
                             decoration: const InputDecoration(
-                              hintText: 'Start typing your note...',
+                              hintText: 'Your thoughts...',
                               border: InputBorder.none,
                             ),
                           ),

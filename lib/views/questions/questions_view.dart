@@ -3,20 +3,20 @@ import 'package:mynotes1/constants/routes.dart';
 import 'package:mynotes1/enums/menu_action.dart';
 import 'package:mynotes1/services/auth/auth_service.dart';
 import 'package:mynotes1/services/auth/auth_user.dart';
-import 'package:mynotes1/services/cloud/notes/cloud_note.dart';
+import 'package:mynotes1/services/cloud/questions/cloud_question.dart';
 import 'package:mynotes1/services/cloud/firebase_cloud_storage.dart';
 import 'package:mynotes1/utilities/dialogs/logout_dialog.dart';
-import 'package:mynotes1/views/notes/notes_list_view.dart';
+import 'package:mynotes1/views/questions/questions_list_view.dart';
 
-class NotesView extends StatefulWidget {
-  const NotesView({Key? key}) : super(key: key);
+class QuestionsView extends StatefulWidget {
+  const QuestionsView({Key? key}) : super(key: key);
 
   @override
-  State<NotesView> createState() => _NotesViewState();
+  State<QuestionsView> createState() => _QuestionsViewState();
 }
 
-class _NotesViewState extends State<NotesView> {
-  late final FirebaseCloudStorage _notesService;
+class _QuestionsViewState extends State<QuestionsView> {
+  late final FirebaseCloudStorage _questionsService;
   //IDK why we used exclamation marks with currentUser and email
   //a getter for email to use in notes view
   AuthUser get user => AuthService.firebase().currentUser!;
@@ -28,7 +28,7 @@ class _NotesViewState extends State<NotesView> {
   @override
   void initState() {
     //singleton is basiclally one copy through out the project.
-    _notesService = FirebaseCloudStorage();
+    _questionsService = FirebaseCloudStorage();
     //We don't need to open the database here as all the operations in the notesService are
     //opening the database by using the method _ensureDbIsOpen()
     //_notesService.open();
@@ -46,7 +46,7 @@ class _NotesViewState extends State<NotesView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Notes'),
+        title: const Text('Know Yourself'),
         //A menu can be opened by the three dots
         actions: [
           PopupMenuButton<MenuAction>(
@@ -79,28 +79,29 @@ class _NotesViewState extends State<NotesView> {
         ],
       ),
       body: StreamBuilder(
-        stream: _notesService.allNotes(ownerUserId: userId),
+        stream: _questionsService.allQuestions(ownerUserId: userId),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
             case ConnectionState.active:
               if (snapshot.hasData) {
-                final allNotes = snapshot.data as Iterable<CloudNote>;
-                return NotesListView(
-                  notes: allNotes,
-                  onDeleteNote: (note) async {
-                    await _notesService.deleteNote(documentId: note.documentId);
+                final allQuestions = snapshot.data as Iterable<CloudQuestion>;
+                return QuestionsListView(
+                  questions: allQuestions,
+                  onDeleteQuestion: (question) async {
+                    await _questionsService.deleteQuestion(
+                        documentId: question.documentId);
                   },
-                  onTap: (note) {
+                  onTap: (question) {
                     Navigator.of(context).pushNamed(
-                      createOrUpdateNoteRoute,
-                      arguments: note,
+                      createOrUpdateQuestionRoute,
+                      arguments: question,
                     );
                   },
                 );
               } else {
                 //return const CircularProgressIndicator();
-                return const Text('No notes yet.');
+                return const Text('No Questions yet.');
               }
             default:
               return const CircularProgressIndicator();
@@ -109,9 +110,9 @@ class _NotesViewState extends State<NotesView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
+          Navigator.of(context).pushNamed(createOrUpdateQuestionRoute);
         },
-        tooltip: 'Add Note',
+        tooltip: 'Add Question',
         child: Icon(Icons.add),
       ),
       drawer: Drawer(

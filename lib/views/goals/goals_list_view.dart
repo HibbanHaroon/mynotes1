@@ -1,34 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:mynotes1/services/cloud/notes/cloud_note.dart';
+import 'package:mynotes1/services/cloud/goals/cloud_goal.dart';
 import 'package:mynotes1/utilities/dialogs/delete_diallog.dart';
 
-typedef NoteCallback = void Function(CloudNote);
+typedef GoalCallback = void Function(CloudGoal);
 
-class NotesListView extends StatelessWidget {
+class GoalsListView extends StatelessWidget {
   //what is an iterable
-  final Iterable<CloudNote> notes;
-  final NoteCallback onDeleteNote;
-  final NoteCallback onTap;
-  const NotesListView({
+  final Iterable<CloudGoal> goals;
+  final GoalCallback onDeleteGoal;
+  final GoalCallback onTap;
+  const GoalsListView({
     Key? key,
-    required this.notes,
-    required this.onDeleteNote,
+    required this.goals,
+    required this.onDeleteGoal,
     required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(10.0),
       child: GridView.builder(
-        itemCount: notes.length,
+        itemCount: goals.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+          crossAxisCount: 1,
           crossAxisSpacing: 4.0,
-          mainAxisSpacing: 4.0,
+          mainAxisSpacing: 10.0,
+          childAspectRatio: 1.5,
         ),
         itemBuilder: (context, index) {
-          final note = notes.elementAt(index);
+          final goal = goals.elementAt(index);
           return Card(
             elevation: 5,
             color: const Color(0xffddf0dd),
@@ -36,11 +37,11 @@ class NotesListView extends StatelessWidget {
               onLongPress: () async {
                 final shouldDelete = await showDeleteDialog(context);
                 if (shouldDelete) {
-                  onDeleteNote(note);
+                  onDeleteGoal(goal);
                 }
               },
               onTap: () {
-                onTap(note);
+                onTap(goal);
               },
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -49,7 +50,7 @@ class NotesListView extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      note.title,
+                      goal.title,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -62,7 +63,7 @@ class NotesListView extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      note.text,
+                      goal.text,
                       maxLines: 7,
                       softWrap: true,
                       overflow: TextOverflow.ellipsis,
