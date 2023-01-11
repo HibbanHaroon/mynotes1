@@ -7,3 +7,5 @@ const goalsRoute = '/goals/';
 const createOrUpdateGoalRoute = '/goals/new_goal/';
 const questionsRoute = '/questions/';
 const createOrUpdateQuestionRoute = '/questions/new_question/';
+const ratingRoute = '/rating/';
+const diaryRoute = '/diary/';

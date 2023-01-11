@@ -3,20 +3,20 @@ import 'package:mynotes1/constants/routes.dart';
 import 'package:mynotes1/enums/menu_action.dart';
 import 'package:mynotes1/services/auth/auth_service.dart';
 import 'package:mynotes1/services/auth/auth_user.dart';
-import 'package:mynotes1/services/cloud/goals/cloud_goal.dart';
+import 'package:mynotes1/services/cloud/questions/cloud_question.dart';
 import 'package:mynotes1/services/cloud/firebase_cloud_storage.dart';
 import 'package:mynotes1/utilities/dialogs/logout_dialog.dart';
-import 'package:mynotes1/views/goals/goals_list_view.dart';
+import 'package:mynotes1/views/questions/questions_list_view.dart';
 
-class GoalsView extends StatefulWidget {
-  const GoalsView({Key? key}) : super(key: key);
+class DiaryView extends StatefulWidget {
+  const DiaryView({Key? key}) : super(key: key);
 
   @override
-  State<GoalsView> createState() => _GoalsViewState();
+  State<DiaryView> createState() => _DiaryViewState();
 }
 
-class _GoalsViewState extends State<GoalsView> {
-  late final FirebaseCloudStorage _goalsService;
+class _DiaryViewState extends State<DiaryView> {
+  /*late final FirebaseCloudStorage _questionsService;
   //IDK why we used exclamation marks with currentUser and email
   //a getter for email to use in notes view
   AuthUser get user => AuthService.firebase().currentUser!;
@@ -28,25 +28,24 @@ class _GoalsViewState extends State<GoalsView> {
   @override
   void initState() {
     //singleton is basiclally one copy through out the project.
-    _goalsService = FirebaseCloudStorage();
+    _questionsService = FirebaseCloudStorage();
     //We don't need to open the database here as all the operations in the notesService are
     //opening the database by using the method _ensureDbIsOpen()
     //_notesService.open();
     super.initState();
   }
-/*
+
   @override
   void dispose() {
     _notesService.close();
     super.dispose();
   }
 */
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Goals'),
+        title: const Text('Diary'),
         //A menu can be opened by the three dots
         actions: [
           PopupMenuButton<MenuAction>(
@@ -78,56 +77,21 @@ class _GoalsViewState extends State<GoalsView> {
           )
         ],
       ),
-      body: StreamBuilder(
-        stream: _goalsService.allGoals(ownerUserId: userId),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-            case ConnectionState.active:
-              if (snapshot.hasData) {
-                final allGoals = snapshot.data as Iterable<CloudGoal>;
-                return GoalsListView(
-                  goals: allGoals,
-                  onDeleteGoal: (goal) async {
-                    await _goalsService.deleteGoal(documentId: goal.documentId);
-                  },
-                  onTap: (goal) {
-                    Navigator.of(context).pushNamed(
-                      createOrUpdateGoalRoute,
-                      arguments: goal,
-                    );
-                  },
-                );
-              } else {
-                //return const CircularProgressIndicator();
-                return const Text('No goals yet.');
-              }
-            default:
-              return const CircularProgressIndicator();
-          }
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).pushNamed(createOrUpdateGoalRoute);
-        },
-        tooltip: 'Add Goal',
-        child: Icon(Icons.add),
-      ),
+      body: const Text(''),
       drawer: Drawer(
         child: ListView(
           children: [
-            Center(
+            const Center(
               child: UserAccountsDrawerHeader(
                 accountEmail: Text(
-                  userEmail,
+                  'userEmail',
                   style: const TextStyle(
                     fontSize: 15,
                   ),
                 ),
                 currentAccountPicture: CircleAvatar(
                   child: Text(
-                    userEmail[0].toUpperCase(),
+                    'U',
                     style: const TextStyle(
                       fontSize: 20,
                     ),

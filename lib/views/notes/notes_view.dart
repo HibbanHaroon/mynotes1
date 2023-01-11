@@ -136,17 +136,38 @@ class _NotesViewState extends State<NotesView> {
                 accountName: null,
               ),
             ),
-            /*
-            const ListTile(
-              leading: Icon(Icons.rate_review),
-              title: Text(
+            ListTile(
+              leading: const Icon(Icons.rate_review),
+              title: const Text(
                 'Rate Your Day',
                 style: TextStyle(
                   fontSize: 15,
                   color: Colors.green,
                 ),
               ),
-            ),*/
+              onTap: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  ratingRoute,
+                  (route) => false,
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.auto_stories),
+              title: const Text(
+                'Diary',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.green,
+                ),
+              ),
+              onTap: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  diaryRoute,
+                  (route) => false,
+                );
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.question_mark),
               title: const Text(
